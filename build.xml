@@ -1,0 +1,145 @@
+<!DOCTYPE project []>
+
+<project name="Using_Ant_To_Run_TestNG_Tests" default="usage" basedir=".">
+	
+<!-- ========== Initialize Property Variables =================================== -->
+<!-- Sets variables which can be used later. The value of a property is accessed via ${PropertyName}--> 
+<!-- Use <echo message="message to print" /> to print your message--> 
+
+	<property environment="env" />
+	
+	<property name="test.home" value="${basedir}" description="Specifies JAVA project location"/>
+	<property name="test.src" value="${test.home}/src" description="Specifies src folder location in the project"/>
+	<property name="test.jars" value="C:/seleniumJar" description="Specifies JARs location"/>
+	<property name="test.dest" value="${test.home}/ant_build" description="Specifies location to store .class compiled files"/>
+	<property name="test.reports" value="${test.home}/ant_reports" description="Specifies test reports output location"/>
+
+	<property name="test.suite" value="${test.src}/test/java/com/test1/testsuites/RegressionSuite.xml" description="Specifies TestNG test suite xml"/>
+	
+    <path id="test.classpath">
+	    <pathelement location="${test.dest}" />
+	    <fileset dir="${test.jars}">
+	    	<include name="*.jar"/>
+	    </fileset>
+    </path>
+
+	<!-- Define TestNG task to facilitate running using Ant -->
+	<taskdef resource="testngtasks" classpathref="test.classpath"/>
+	
+<!-- ========== Target Clean - to delete existing compiled .classes, test reports ======= -->
+	<target name="clean">
+		<echo message="Deleting Ant Build directory..." />
+		<delete dir="${test.dest}" /> 
+		<echo message="Deleting Ant Reports directory..." />
+		<delete dir="${test.reports}" /> 
+	</target>
+	
+<!-- ========== Target Compile - Compiles the JAVA code and generates .class files ======== -->
+	<target name="compile" depends="clean"> 
+		<echo message="Creating Ant Build directory..." />
+		<mkdir dir="${test.dest}" />
+		<echo message="Creating Ant Reports directory..." />
+		<mkdir dir="${test.reports}" />
+		<echo message="Compiling the JAVA code..." />
+		<javac srcdir="${test.src}" destdir="${test.dest}" classpathref="test.classpath"  verbose="false" debug="true"> </javac> 
+	</target>
+
+<!-- ========== Target Run - Run the TestNG Tests and Generate Reports ====================== -->
+	  <target name="run" depends="compile">
+	  	
+		<echo message="Starting the execution of tests..." />
+	  	
+	   	<testng classpathref="test.classpath"
+	  		outputdir="${test.reports}"
+	  		listeners = "org.testng.reporters.FailedReporter, org.testng.reporters.DotTestListener"
+	  		haltonfailure="false">
+	  		<classfileset dir="${test.dest}">
+				<!-- =========== Specify which tests to run =========== -->
+	  		 	<!-- <include name="**/*.class"  description="To run all the TestNG classes in the project"/> -->	  				  			
+	  			<include name="com/test1/tests/RTestChrome.class" /> 
+	  		<!--	<include name="com/test1/tests/ScheduleLMByUtilityNowTest.class" />  -->
+	  			
+	  		</classfileset>
+	  	</testng>
+	  </target>
+		
+<!-- ========== Target RunSuite - Run the TestNG Suite and Generate Reports ====================== -->
+		  <target name="runsuite" depends="compile">
+		  	
+			<echo message="Starting the execution of test suite..." />
+
+		  	<testng classpathref="test.classpath"
+	  				listeners = "org.testng.reporters.FailedReporter, org.testng.reporters.DotTestListener"
+		  	        outputDir="${test.reports}"
+		  	        haltOnfailure="false">
+		  	   <!-- =========== Specify which test suites to run in test.suite property =========== -->
+		  	   <xmlfileset  file="${test.suite}"/>
+		  	</testng>
+		  </target>
+	
+<!-- ========== Target Usage - Default target to run when just Ant command alone is used =========== -->
+		  <target name="usage">
+			<echo message="Use command: Ant run or Ant runsuite to execute the tests" />
+		  </target>
+	
+<!-- ======= work in progress  adding XSLT report target to produce XSLT report work in progress =====  -->
+<!--	<target name="makexsltreports" depends="run">
+	<delete dir="${project.dir}/XSLT_Reports/output">
+	</delete>
+	<mkdir dir="${project.dir}/XSLT_Reports/output"/>
+
+	<xslt in="${ng.result}/testng-results.xml" style="src/dummy/testng-results.xsl"
+	out="${project.dir}/XSLT_Reports/output/index.html" classpathref="classpath_jars" processor="SaxonLiaison">
+	<param name="testNgXslt.outputDir" expression="${project.dir}/XSLT_Reports/output/"/>
+	<param name="testNgXslt.showRuntimeTotals" expression="true"/>
+	<param expression="true" name="testNgXslt.sortTestCaseLinks" />
+	<param expression="FAIL,SKIP,PASS,CONF,BY_CLASS" name="testNgXslt.testDetailsFilter" />
+	</xslt>
+	</target>	-->
+	
+	<!-- ========  using javax.mail.jar and javax.activation.jar trying to send report as zip file ===== -->
+	<!-- <target description = "send an email with an ant-report attached after running test suite." name="sendMail" >
+    <zip destfile="${test.home}/ant_reports/emailable-report.zip" basedir="${test.home}/ant_reports/emailable-report" /> 
+	<mail
+	tolist="jason.lee@soltech.net"
+	from="synhlee@yahoo.com"
+	subject="RTest Results"
+	mailhost="smtp.mail.yahoo.com"
+	mailport="465"
+	ssl="true"
+	user="synhlee@yahoo.com"
+	password="iandirastafari1">
+	<attachments>
+		<fileset dir="${test.home}/ant_reports/emailable-report">
+			<include name="**/*.zip"/>
+		</fileset>
+	</attachments>
+	</mail>
+	</target>  -->
+	
+	<!-- user = gmail email account to use for sending the email password = email password from address and 
+	replayto address is the same as user.  Input recepient email in the to address, cc address and 
+	bcc address -->
+	<target description="Generates and send test reports" name="sendMail" >
+	  <mail mailhost="smtp.gmail.com" 
+	  	mailport="465"   
+	  	subject="RTest Results Ant Report"
+	  	ssl="true"
+	  	user="syntester0077@gmail.com" 
+	  	password="myp@ssw0rd">
+	     <from address="syntester0077@gmail.com"></from>
+	     <replyto address="syntester0077@gmail.com"></replyto>
+	     <to address="jason.lee@soltech.net"></to>
+	  	 <cc address = "jeff.reed@soltech.net"></cc>
+	  	 <bcc address = "sam.langberg@soltech.net"></bcc>
+	     <message>The Ant Regression Test has completed</message>
+	     <attachments>
+	       <fileset dir="${test.reports}">
+	          <include name="emailable-report.html"/>
+	      </fileset>
+	     </attachments>
+	  </mail>
+	</target>
+	
+	
+</project>
