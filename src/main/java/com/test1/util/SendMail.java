@@ -153,7 +153,7 @@ InternetAddress(bcc[i]));
           String path= "C:\\Users\\jslee\\workspace\\DTS1\\ant_reports\\emailable-report.html";
 
           String[] to={"synhlee@yahoo.com","jason.lee@soltech.net"};
-          String[] cc={"shulee123@yahoo.com", "jeff.reed@soltech.net"};
+          String[] cc={"synhlee@gmail.com"};
           String[] bcc={};
 
           SendMail.sendMail("syntester0077",

@@ -113,10 +113,7 @@ public class TestBase
 		//Send emailable report email after test suite has been ran
 		SendMail.execute("emailable-report.html");
 		
-		Thread.sleep(2000);
-		
-		//Send emailable ant_report after test suit has been ran
-		SendMail.emailAntReport("emailable-report.html");
+	
 		
 		
 	 }

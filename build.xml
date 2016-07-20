@@ -82,7 +82,7 @@
 			<echo message="Use command: Ant run or Ant runsuite to execute the tests" />
 		  </target>
 	
-<!-- ==========  adding XSLT report target to produce XSLT report ===============  -->
+<!-- ======= work in progress  adding XSLT report target to produce XSLT report work in progress =====  -->
 <!--	<target name="makexsltreports" depends="run">
 	<delete dir="${project.dir}/XSLT_Reports/output">
 	</delete>
@@ -117,19 +117,21 @@
 	</mail>
 	</target>  -->
 	
-	<!-- depends="run" -->
+	<!-- user = gmail email account to use for sending the email password = email password from address and 
+	replayto address is the same as user.  Input recepient email in the to address, cc address and 
+	bcc address -->
 	<target description="Generates and send test reports" name="sendMail" >
 	  <mail mailhost="smtp.gmail.com" 
 	  	mailport="465"   
 	  	subject="RTest Results Ant Report"
 	  	ssl="true"
-	  	user="syntester0077@gmail.com"
+	  	user="syntester0077@gmail.com" 
 	  	password="myp@ssw0rd">
 	     <from address="syntester0077@gmail.com"></from>
 	     <replyto address="syntester0077@gmail.com"></replyto>
 	     <to address="jason.lee@soltech.net"></to>
 	  	 <cc address = "jeff.reed@soltech.net"></cc>
-	  	 <bcc address = "synhlee@yahoo.com"></bcc>
+	  	 <bcc address = "sam.langerb@soltech.net"></bcc>
 	     <message>The Ant Regression Test has completed</message>
 	     <attachments>
 	       <fileset dir="${test.reports}">
