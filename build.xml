@@ -131,7 +131,7 @@
 	     <replyto address="syntester0077@gmail.com"></replyto>
 	     <to address="jason.lee@soltech.net"></to>
 	  	 <cc address = "jeff.reed@soltech.net"></cc>
-	  	 <bcc address = "sam.langerb@soltech.net"></bcc>
+	  	 <bcc address = "sam.langberg@soltech.net"></bcc>
 	     <message>The Ant Regression Test has completed</message>
 	     <attachments>
 	       <fileset dir="${test.reports}">
